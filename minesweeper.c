@@ -110,6 +110,43 @@ int main(void) {
                 print_debug_minefield(minefield);
             }
         }
+        else if(cmd==3)
+        {
+            int row,col;
+            scanf("%d",&row);
+            scanf("%d",&col);
+            if(minefield[row][col]==HIDDEN_MINE)
+            {
+                printf("Game over");
+                return 0;
+            }
+            else{
+                minefield[row][col]=VISIBLE_SAFE;
+                // cases:
+                // row,col-1
+                // row,col+1
+                // row-1,col
+                // row+1,col
+                // row,col
+                if(count_mines_square(minefield,row-1,col,3)==0)
+                {
+                    minefield[row-1][col]=VISIBLE_SAFE;
+                }
+                if(count_mines_square(minefield,row+1,col,3)==0)
+                {
+                    minefield[row+1][col]=VISIBLE_SAFE;
+                }
+                if(count_mines_square(minefield,row,col-1,3)==0)
+                {
+                    minefield[row][col-1]=VISIBLE_SAFE;
+                }
+                if(count_mines_square(minefield,row,col+1,3)==0)
+                {
+                    minefield[row][col+1]=VISIBLE_SAFE;
+                }
+            }
+            print_debug_minefield(minefield);
+        }
     }
     return 0;
 }
@@ -194,3 +231,40 @@ int count_mines_square(int minefield[SIZE][SIZE],int row,int col,int side){
     }
     return num;
 }
+
+
+// Revealing the cross
+// void reveal(int minefield[SIZE][SIZE],int row,int col){
+//     if(minefield[row][col]==HIDDEN_SAFE)
+//     {
+//         minefield[row][col]=VISIBLE_SAFE;
+//     }
+//     int i=row-1;
+//     while(i<=row+1 && 0<=i<SIZE)
+//     {
+//         if(count_mines_row(minefield,i,col,3)==0)
+//         {
+//             minefield[i][col]=VISIBLE_SAFE;
+//         }
+//         int j=col-1;
+//         i++;
+//         while(j<=col+1 && 0<=j<SIZE)
+//         {
+//             if(count_mines_row(minefield,i,j,3)==0)
+//             {
+//                 minefield[i][j]=VISIBLE_SAFE;
+//                 i++;
+//                 j++;
+//             }
+//             else{
+//                 i++;
+//             }
+//         }
+//     }
+// }
+// row,col-1
+// row,col
+// row,col+1
+// row-1,col
+// row+1,col
+
