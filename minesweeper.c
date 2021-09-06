@@ -30,7 +30,9 @@
 void initialise_field(int minefield[SIZE][SIZE]);
 void print_debug_minefield(int minefield[SIZE][SIZE]);
 void place_mines(int minefield[SIZE][SIZE],int num_mines,int mine_row[num_mines],int mine_col[num_mines]);
-int count_mines(int minefield[SIZE][SIZE],int row,int col_start,int col_end);
+int count_mines_row(int minefield[SIZE][SIZE],int row,int col_start,int col_end);
+int count_mines_square(int minefield[SIZE][SIZE],int row,int col,int side);
+
 
 
 // Place your function prototyes here.
@@ -71,23 +73,42 @@ int main(void) {
     // TODO: Scan in commands to play the game until the game ends.
     // A game ends when the player wins, loses, or enters EOF (Ctrl+D).
     // You should display the minefield after each command has been processed.
-
     int cmd;
-    int n,row,col_start,col_end;
-    while(scanf("%d",&cmd)==DETECT_ROW)
+    while(scanf("%d",&cmd)==1)
     {
-        scanf("%d",&row);
-        scanf("%d",&col_start);
-        scanf("%d",&col_end);
-        if(row<SIZE && col_start<SIZE && col_end<SIZE && col_start<col_end)
+        if(cmd==1)
         {
-            n=count_mines(minefield,row,col_start,col_end);
-            printf("There are %d mine(s) in row %d, from column %d to %d\n",n,row,col_start,col_end-1);
-            print_debug_minefield(minefield);
+            int n,row,col_start,col_end;
+            scanf("%d",&row);
+            scanf("%d",&col_start);
+            scanf("%d",&col_end);
+            if(row<SIZE && col_start<SIZE && col_end<SIZE && col_start<col_end)
+            {
+                n=count_mines_row(minefield,row,col_start,col_end);
+                printf("There are %d mine(s) in row %d, from column %d to %d\n",n,row,col_start,col_end-1);
+                print_debug_minefield(minefield);
+            }
+            else{
+                printf("Coordinates not on the map\n");
+                print_debug_minefield(minefield);
+            }
         }
-        else{
-            printf("Coordinates not on the map\n");
-            print_debug_minefield(minefield);
+        else if(cmd==2)
+        {
+            int n,row,col,side;
+            scanf("%d",&row);
+            scanf("%d",&col);
+            scanf("%d",&side);
+            if(row<SIZE && col<SIZE && side<SIZE)
+            {
+                n=count_mines_square(minefield,row,col,side);
+                printf("There are %d mine(s) in the square centered at row %d, column %d, of size %d\n",n,row,col,side);
+                print_debug_minefield(minefield);
+            }
+            else{
+                printf("Coordinated not on the map\n");
+                print_debug_minefield(minefield);
+            }
         }
     }
     return 0;
@@ -138,7 +159,7 @@ void place_mines(int minefield[SIZE][SIZE],int num_mines,int mine_row[num_mines]
 
 
 // counting the mines in a row
-int count_mines(int minefield[SIZE][SIZE],int row,int col_start,int col_end){
+int count_mines_row(int minefield[SIZE][SIZE],int row,int col_start,int col_end){
     int num=0;
     int i=col_start;
     while(i<=col_end)
@@ -148,6 +169,28 @@ int count_mines(int minefield[SIZE][SIZE],int row,int col_start,int col_end){
             num++;
         }
         i++;
+    }
+    return num;
+}
+
+// counting the mines in a square
+int count_mines_square(int minefield[SIZE][SIZE],int row,int col,int side){
+    int num=0;
+    int col_i=col-1;
+    int col_end=col_i+side-1;
+    while(col_i<=col_end && col_i<SIZE)
+    {
+        int row_i=row-1;
+        int row_end=row_i+side-1;
+        while(row_i<=row_end && row_i<SIZE)
+        {
+            if(minefield[row_i][col_i]==HIDDEN_MINE)
+            {
+                num++;
+            }
+            row_i++;
+        }
+        col_i++;
     }
     return num;
 }
